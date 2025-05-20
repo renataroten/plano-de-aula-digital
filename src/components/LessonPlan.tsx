@@ -27,8 +27,11 @@ const getSubjectLabel = (subject: string): string => {
 
 const getGradeLabel = (grade: string): string => {
   const gradeMap: Record<string, string> = {
-    elementary: 'Ensino Fundamental I',
-    middle: 'Ensino Fundamental II',
+    elementary: 'Ensino Fundamental Anos Iniciais',
+    middle_6: '6º Ano - Ensino Fundamental Anos Finais',
+    middle_7: '7º Ano - Ensino Fundamental Anos Finais',
+    middle_8: '8º Ano - Ensino Fundamental Anos Finais',
+    middle_9: '9º Ano - Ensino Fundamental Anos Finais',
     high: 'Ensino Médio',
     college: 'Ensino Superior',
   };

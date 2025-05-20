@@ -1,8 +1,7 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { usePlanner } from '@/contexts/PlannerContext';
 import { Button } from '@/components/ui/button';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Upload } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
@@ -10,8 +9,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import ImportPlanModal from './ImportPlanModal';
 
 const Sidebar: React.FC = () => {
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const { 
     calendarState, 
     setCurrentDate, 
@@ -58,6 +59,17 @@ const Sidebar: React.FC = () => {
   return (
     <div className="w-64 bg-sidebar border-r p-4 h-screen overflow-y-auto">
       <div className="text-lg font-bold text-primary mb-6">Planner Digital</div>
+      
+      <div className="mb-4">
+        <Button 
+          variant="outline" 
+          className="w-full flex justify-start mb-2"
+          onClick={() => setIsImportModalOpen(true)}
+        >
+          <Upload className="mr-2 h-4 w-4" />
+          Importar Planejamento 2023
+        </Button>
+      </div>
       
       <div className="mb-6">
         <Popover>
@@ -156,6 +168,11 @@ const Sidebar: React.FC = () => {
           ))}
         </div>
       </div>
+      
+      <ImportPlanModal 
+        isOpen={isImportModalOpen} 
+        onClose={() => setIsImportModalOpen(false)} 
+      />
     </div>
   );
 };
