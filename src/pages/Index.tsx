@@ -1,13 +1,83 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 
-const Index = () => {
+import React, { useState } from 'react';
+import Sidebar from '@/components/Sidebar';
+import Calendar from '@/components/Calendar';
+import LessonPlanModal from '@/components/LessonPlanModal';
+import { PlannerProvider, usePlanner } from '@/contexts/PlannerContext';
+import { LessonPlan } from '@/types';
+import { AlertTriangle } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
+import { registerLocale } from 'date-fns';
+import { ptBR } from 'date-fns/locale/pt-BR';
+
+// Register the Portuguese (Brazil) locale for date-fns
+registerLocale('pt-BR', ptBR);
+
+const PlannerApp: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<LessonPlan | null>(null);
+  const { alerts } = usePlanner();
+  
+  // Check for upcoming alerts
+  React.useEffect(() => {
+    const today = new Date();
+    const upcomingAlerts = alerts.filter(alert => {
+      const alertDate = new Date(alert.date);
+      const diffTime = Math.abs(alertDate.getTime() - today.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays <= 3 && !alert.completed;
+    });
+    
+    if (upcomingAlerts.length > 0) {
+      upcomingAlerts.forEach(alert => {
+        toast({
+          title: 'Alerta próximo!',
+          description: alert.title,
+          icon: <AlertTriangle className="h-5 w-5 text-planner-orange" />,
+        });
+      });
+    }
+  }, [alerts]);
+  
+  const handleCreatePlan = () => {
+    setSelectedPlan(null);
+    setIsModalOpen(true);
+  };
+  
+  const handleSelectPlan = (plan: LessonPlan) => {
+    setSelectedPlan(plan);
+    setIsModalOpen(true);
+  };
+  
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPlan(null);
+  };
+  
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="flex h-screen overflow-hidden">
+      <Sidebar />
+      <main className="flex-1 overflow-hidden">
+        <Calendar 
+          onCreatePlan={handleCreatePlan} 
+          onSelectPlan={handleSelectPlan}
+        />
+      </main>
+      
+      <LessonPlanModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        plan={selectedPlan}
+      />
     </div>
+  );
+};
+
+const Index: React.FC = () => {
+  return (
+    <PlannerProvider>
+      <PlannerApp />
+    </PlannerProvider>
   );
 };
 
