@@ -7,11 +7,7 @@ import { PlannerProvider, usePlanner } from '@/contexts/PlannerContext';
 import { LessonPlan } from '@/types';
 import { AlertTriangle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { registerLocale } from 'date-fns';
-import { ptBR } from 'date-fns/locale/pt-BR';
-
-// Register the Portuguese (Brazil) locale for date-fns
-registerLocale('pt-BR', ptBR);
+import { ptBR } from 'date-fns/locale';
 
 const PlannerApp: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,7 +29,7 @@ const PlannerApp: React.FC = () => {
         toast({
           title: 'Alerta próximo!',
           description: alert.title,
-          icon: <AlertTriangle className="h-5 w-5 text-planner-orange" />,
+          // Removendo a propriedade icon que não existe no tipo Toast
         });
       });
     }
