@@ -30,8 +30,11 @@ const Sidebar: React.FC = () => {
   ];
   
   const grades = [
-    { id: 'elementary', label: 'Ensino Fundamental I' },
-    { id: 'middle', label: 'Ensino Fundamental II' },
+    { id: 'elementary', label: 'Ensino Fundamental Anos Iniciais' },
+    { id: 'middle_6', label: '6º Ano - Ensino Fundamental Anos Finais' },
+    { id: 'middle_7', label: '7º Ano - Ensino Fundamental Anos Finais' },
+    { id: 'middle_8', label: '8º Ano - Ensino Fundamental Anos Finais' },
+    { id: 'middle_9', label: '9º Ano - Ensino Fundamental Anos Finais' },
     { id: 'high', label: 'Ensino Médio' },
     { id: 'college', label: 'Ensino Superior' },
   ];

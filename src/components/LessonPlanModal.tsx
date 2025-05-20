@@ -51,8 +51,11 @@ const subjectOptions = [
 ];
 
 const gradeLevelOptions = [
-  { value: 'elementary', label: 'Ensino Fundamental I' },
-  { value: 'middle', label: 'Ensino Fundamental II' },
+  { value: 'elementary', label: 'Ensino Fundamental Anos Iniciais' },
+  { value: 'middle_6', label: '6º Ano - Ensino Fundamental Anos Finais' },
+  { value: 'middle_7', label: '7º Ano - Ensino Fundamental Anos Finais' },
+  { value: 'middle_8', label: '8º Ano - Ensino Fundamental Anos Finais' },
+  { value: 'middle_9', label: '9º Ano - Ensino Fundamental Anos Finais' },
   { value: 'high', label: 'Ensino Médio' },
   { value: 'college', label: 'Ensino Superior' },
 ];
@@ -61,7 +64,7 @@ const emptyPlan: Omit<LessonPlan, 'id' | 'createdAt' | 'updatedAt'> = {
   title: '',
   description: '',
   subject: 'math',
-  gradeLevel: 'middle',
+  gradeLevel: 'middle_6',
   date: new Date(),
   notes: '',
   alerts: [],

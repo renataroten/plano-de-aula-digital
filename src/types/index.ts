@@ -1,7 +1,15 @@
 
+
 export type Subject = 'math' | 'science' | 'history' | 'language' | 'art' | 'other';
 
-export type GradeLevel = 'elementary' | 'middle' | 'high' | 'college';
+export type GradeLevel = 
+  | 'elementary' // Ensino Fundamental Anos Iniciais
+  | 'middle_6' // 6º ano
+  | 'middle_7' // 7º ano
+  | 'middle_8' // 8º ano
+  | 'middle_9' // 9º ano
+  | 'high' 
+  | 'college';
 
 export type AlertType = 'exam' | 'assignment' | 'reminder' | 'event';
 
@@ -35,3 +43,4 @@ export interface CalendarViewState {
     gradeLevels: GradeLevel[];
   };
 }
+

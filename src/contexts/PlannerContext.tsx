@@ -37,12 +37,35 @@ export const PlannerProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   });
 
+  // Função para migrar dados antigos para o novo formato
+  const migrateData = (parsedData: any) => {
+    // Migrar planos de aula com gradeLevel 'middle' para 'middle_6'
+    if (parsedData.lessonPlans) {
+      const migratedPlans = parsedData.lessonPlans.map((plan: any) => ({
+        ...plan,
+        date: new Date(plan.date),
+        createdAt: new Date(plan.createdAt),
+        updatedAt: new Date(plan.updatedAt),
+        gradeLevel: plan.gradeLevel === 'middle' ? 'middle_6' : plan.gradeLevel
+      }));
+      return {
+        ...parsedData,
+        lessonPlans: migratedPlans,
+      };
+    }
+    return parsedData;
+  };
+
   // Load data from localStorage on component mount
   useEffect(() => {
     const savedData = localStorage.getItem(STORAGE_KEY);
     if (savedData) {
       try {
-        const parsedData = JSON.parse(savedData);
+        let parsedData = JSON.parse(savedData);
+        
+        // Migrar dados antigos para o novo formato
+        parsedData = migrateData(parsedData);
+        
         if (parsedData.lessonPlans) {
           // Convert string dates back to Date objects
           const plans = parsedData.lessonPlans.map((plan: any) => ({
