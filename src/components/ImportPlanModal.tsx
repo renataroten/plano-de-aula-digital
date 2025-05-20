@@ -14,6 +14,8 @@ import { usePlanner } from '@/contexts/PlannerContext';
 import { toast } from '@/hooks/use-toast';
 import { addYears, formatISO } from 'date-fns';
 import { LessonPlan } from '@/types';
+import * as XLSX from 'xlsx';
+import { FileSpreadsheet } from 'lucide-react';
 
 interface ImportPlanModalProps {
   isOpen: boolean;
@@ -43,11 +45,31 @@ const ImportPlanModal: React.FC<ImportPlanModalProps> = ({ isOpen, onClose }) =>
     return newDate;
   };
   
+  const processExcelFile = (file: File): Promise<any[]> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = e.target?.result;
+          const workbook = XLSX.read(data, { type: 'binary' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet);
+          resolve(jsonData);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsBinaryString(file);
+    });
+  };
+  
   const handleImport = async () => {
     if (!file) {
       toast({
         title: "Nenhum arquivo selecionado",
-        description: "Por favor, selecione um arquivo CSV ou JSON para importar.",
+        description: "Por favor, selecione um arquivo CSV, JSON ou Excel para importar.",
         variant: "destructive",
       });
       return;
@@ -56,16 +78,19 @@ const ImportPlanModal: React.FC<ImportPlanModalProps> = ({ isOpen, onClose }) =>
     setIsImporting(true);
     
     try {
-      const content = await file.text();
       let importedPlans: any[] = [];
       
-      // Verifica se é um arquivo JSON
+      // Verifica o tipo de arquivo e processa adequadamente
       if (file.name.endsWith('.json')) {
+        const content = await file.text();
         importedPlans = JSON.parse(content);
       } 
-      // Verifica se é um arquivo CSV
+      else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        importedPlans = await processExcelFile(file);
+      }
       else if (file.name.endsWith('.csv')) {
         // Processamento simples de CSV
+        const content = await file.text();
         const lines = content.split('\n');
         const headers = lines[0].split(',');
         
@@ -139,16 +164,19 @@ const ImportPlanModal: React.FC<ImportPlanModalProps> = ({ isOpen, onClose }) =>
         
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="file-upload">Selecione o arquivo (CSV ou JSON)</Label>
+            <Label htmlFor="file-upload">Selecione o arquivo (CSV, JSON ou Excel)</Label>
             <Input
               id="file-upload"
               type="file"
-              accept=".csv,.json"
+              accept=".csv,.json,.xlsx,.xls"
               onChange={handleFileChange}
             />
-            <p className="text-sm text-gray-500">
-              O sistema adaptará automaticamente as datas de 2023 para 2025, mantendo os mesmos dias da semana.
-            </p>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <FileSpreadsheet size={16} />
+              <p>
+                O sistema adaptará automaticamente as datas de 2023 para 2025, mantendo os mesmos dias da semana.
+              </p>
+            </div>
           </div>
         </div>
         
